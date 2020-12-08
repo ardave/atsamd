@@ -15,6 +15,13 @@ use hal::entry;
 use hal::pac::{CorePeripherals, Peripherals};
 use hal::prelude::*;
 
+fn onOffForTime(time: u32, delay: &mut Delay, red_led: &mut hal::gpio::Pin<feather_m0::gpio::v2::PA17, hal::gpio::v2::Output<hal::gpio::v2::PushPull>>) -> () {
+    delay.delay_ms(time);
+    red_led.set_high().unwrap();
+    delay.delay_ms(time);
+    red_led.set_low().unwrap();
+}
+
 #[entry]
 fn main() -> ! {
     let mut peripherals = Peripherals::take().unwrap();
@@ -29,9 +36,16 @@ fn main() -> ! {
     let mut red_led = pins.d13.into_open_drain_output(&mut pins.port);
     let mut delay = Delay::new(core.SYST, &mut clocks);
     loop {
-        delay.delay_ms(200u8);
-        red_led.set_high().unwrap();
-        delay.delay_ms(200u8);
-        red_led.set_low().unwrap();
+        for _ in 0..3 {
+            onOffForTime(100u32, &mut delay, &mut red_led);
+        }
+
+        delay.delay_ms(400u32);
+
+        for _ in 0..3 {
+            onOffForTime(200u32, &mut delay, &mut red_led);
+        }
+        delay.delay_ms(400u32);        
+        
     }
 }
